@@ -65,7 +65,6 @@
 
 ### Code Organization
 
-- Group related functions and types in feature-based modules
 - Create utility hooks for reusable logic
 - Use barrel exports (index.ts files) to simplify imports
 - Implement proper error handling patterns
@@ -120,15 +119,11 @@
 
 - Run ESLint before each commit
 - Maintain code coverage targets
-- Regular performance audits with Lighthouse
-- Accessibility compliance checks
 
 ## 5. Next.js Best Practices
 
 ### Page and Component Structure
 
-- Use the App Router for new features (`app/` directory)
-- Implement proper loading states with React Suspense
 - Use server components for data fetching when possible
 - Keep client components lightweight by moving logic to server components
 - Implement error boundaries at the page level
@@ -174,51 +169,51 @@ import Footer from "./Footer";
 
 ```tsx
 // bad
-render() {
-  const { irrelevantProp, ...relevantProps } = this.props;
-  return <WrappedComponent {...this.props} />
-}
+const Component = (props) => {
+  const { irrelevantProp, ...relevantProps } = props;
+  return <WrappedComponent {...props} />;
+};
 
 // good
-render() {
-  const { irrelevantProp, ...relevantProps } = this.props;
-  return <WrappedComponent {...relevantProps} />
-}
+const Component = (props) => {
+  const { irrelevantProp, ...relevantProps } = props;
+  return <WrappedComponent {...relevantProps} />;
+};
 ```
 
 - Implement proper error boundaries
 
-  ```tsx
-  // Bad
-  // No error handling
-  const ProductPage = () => {
-    const { data } = useProductData();
-    return <ProductDisplay product={data} />;
-  };
+```tsx
+// Bad
+// No error handling
+const ProductPage = () => {
+  const { data } = useProductData();
+  return <ProductDisplay product={data} />;
+};
 
-  // Good
-  // With error boundary
-  class ErrorBoundary extends React.Component {
-    state = { hasError: false };
+// Good
+// With error boundary
+class ErrorBoundary extends React.Component {
+  state = { hasError: false };
 
-    static getDerivedStateFromError() {
-      return { hasError: true };
-    }
-
-    render() {
-      if (this.state.hasError) {
-        return <ErrorFallback />;
-      }
-      return this.props.children;
-    }
+  static getDerivedStateFromError() {
+    return { hasError: true };
   }
 
-  const ProductPage = () => (
-    <ErrorBoundary>
-      <ProductContent />
-    </ErrorBoundary>
-  );
-  ```
+  render() {
+    if (this.state.hasError) {
+      return <ErrorFallback />;
+    }
+    return this.props.children;
+  }
+}
+
+const ProductPage = () => (
+  <ErrorBoundary>
+    <ProductContent />
+  </ErrorBoundary>
+);
+```
 
 - Wrap JSX tags in parentheses when they span more than one line
 
@@ -276,39 +271,6 @@ render() {
   />;
   ```
 
-- Implement proper loading states
-
-  ```tsx
-  // Bad
-  const ProductList = () => {
-    const { data } = useQuery(["products"]);
-    return (
-      <div>
-        {data.map((product) => (
-          <ProductItem product={product} />
-        ))}
-      </div>
-    );
-  };
-
-  // Good
-  const ProductList = () => {
-    const { data, isLoading, error } = useQuery(["products"]);
-
-    if (isLoading) return <Skeleton count={5} />;
-    if (error) return <ErrorMessage message={error.message} />;
-    if (!data?.length) return <EmptyState />;
-
-    return (
-      <div>
-        {data.map((product) => (
-          <ProductItem product={product} />
-        ))}
-      </div>
-    );
-  };
-  ```
-
 - Add meaningful alt text to images
 
   ```tsx
@@ -317,18 +279,6 @@ render() {
 
   // Good
   <img src="/product.jpg" alt="Blue denim jacket with button closure, size medium" />
-  ```
-
-- Use semantic HTML
-
-  ```tsx
-  // Bad
-  <div onClick={handleClick}>Click me</div>
-  <div className="heading">Product Title</div>
-
-  // Good
-  <button onClick={handleClick}>Click me</button>
-  <h2>Product Title</h2>
   ```
 
 - Memoize expensive calculations
@@ -428,34 +378,6 @@ render() {
   );
   ```
 
-- Hardcode text (use constants)
-
-  ```tsx
-  // Bad
-  const WelcomeMessage = ({ name }) => (
-    <div>
-      <h1>Welcome to 29CM!</h1>
-      <p>Hello {name}, thank you for shopping with us.</p>
-      <button>Continue Shopping</button>
-    </div>
-  );
-
-  // Good
-  const TEXTS = {
-    WELCOME: "Welcome to 29CM!",
-    GREETING: (name) => `Hello ${name}, thank you for shopping with us.`,
-    CONTINUE: "Continue Shopping",
-  };
-
-  const WelcomeMessage = ({ name }) => (
-    <div>
-      <h1>{TEXTS.WELCOME}</h1>
-      <p>{TEXTS.GREETING(name)}</p>
-      <button>{TEXTS.CONTINUE}</button>
-    </div>
-  );
-  ```
-
 - Ignore TypeScript warnings
 
   ```typescript
@@ -500,7 +422,7 @@ render() {
 - [ ] Create branch from dev following coding conventions
 - [ ] Implement task according to estimation file
 - [ ] Mark completed tasks in estimation file before PR
-- [ ] Submit PR for review by FE lead and team members
+- [ ] Submit PR for review by FE lead
 - [ ] Address PR comments if any
 - [ ] FE lead merges PR and deploys to dev environment for QC testing
 
